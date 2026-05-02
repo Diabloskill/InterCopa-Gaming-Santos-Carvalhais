@@ -31,7 +31,7 @@ const Label = ({ children }) => (
 
 // 🔗 SUA URL DO GOOGLE SHEETS (já está correta)
 const SCRIPT_URL =
-  "https://script.google.com/macros/s/AKfycbwcdqmmGsItU6yTuFtkDSRQc-GFpkDxieSbfUwqmztPjeOOYcqnxWR6f3jJJO2QyBCL4g/exec";
+  "https://script.google.com/macros/s/AKfycbyU5aYsC3I5MK3RT_-S1mmfusj-8v0DP-ZtL4n87P4mLAGs51YRDaXJ34DVrzDET4bu/exec";
 
 // 🎮 LIMITE DE VAGAS
 const MAX_VAGAS = 32;
