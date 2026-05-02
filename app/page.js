@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 
-// COMPONENTES SIMPLES (substituindo UI externa)
+// COMPONENTES SIMPLES
 const Card = ({ children }) => (
   <div className="bg-white rounded-2xl shadow-xl">{children}</div>
 );
@@ -14,7 +14,7 @@ const CardContent = ({ children }) => (
 
 const Button = ({ children, ...props }) => (
   <button
-    className="w-full bg-purple-700 hover:bg-purple-800 text-white py-2 rounded-xl transition"
+    className="w-full bg-purple-700 hover:bg-purple-800 text-white py-2 rounded-xl transition disabled:opacity-50 disabled:cursor-not-allowed"
     {...props}
   >
     {children}
@@ -29,7 +29,7 @@ const Label = ({ children }) => (
   <label className="text-sm font-medium">{children}</label>
 );
 
-// 🔗 SUA URL DO GOOGLE SHEETS (já está correta)
+// 🔗 SUA URL DO GOOGLE SHEETS
 const SCRIPT_URL =
   "https://script.google.com/macros/s/AKfycbz5k7kniR4VMLccjgh1S2LaOMxsdUr5AB5bkvQ60nV0RAUTKmduEYv8By57ZnAcRK5f/exec";
 
@@ -45,6 +45,9 @@ export default function Page() {
   });
 
   const [inscritos, setInscritos] = useState(0);
+
+  // 🔒 NOVO: estado de loading
+  const [loading, setLoading] = useState(false);
 
   // 🔄 Buscar total de inscritos
   useEffect(() => {
@@ -65,14 +68,18 @@ export default function Page() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // 📤 Enviar inscrição
+  // 📤 Enviar inscrição (COM TRAVA)
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (loading) return; // 🔒 evita duplo clique
 
     if (inscritos >= MAX_VAGAS) {
       alert("Vagas esgotadas!");
       return;
     }
+
+    setLoading(true); // 🔒 trava botão
 
     try {
       await fetch(SCRIPT_URL, {
@@ -96,6 +103,8 @@ export default function Page() {
       });
     } catch (err) {
       alert("Erro ao enviar inscrição");
+    } finally {
+      setLoading(false); // 🔓 libera botão
     }
   };
 
@@ -163,8 +172,15 @@ export default function Page() {
                 />
               </div>
 
-              <Button disabled={inscritos >= MAX_VAGAS}>
-                {inscritos >= MAX_VAGAS ? "Esgotado" : "Se inscrever"}
+              <Button
+                type="submit"
+                disabled={inscritos >= MAX_VAGAS || loading}
+              >
+                {loading
+                  ? "Enviando..."
+                  : inscritos >= MAX_VAGAS
+                  ? "Esgotado"
+                  : "Se inscrever"}
               </Button>
             </form>
           </CardContent>
